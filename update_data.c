@@ -31,10 +31,41 @@ int main(int argc, const char *argv[])
     printf("<font size=3 color=\"#ffff00\">\n");
     printf("<br><br><br>\n");
     printf("&nbsp&nbsp&nbsp\n");
+
+#if 1
+    DIR *dir;
+    struct dirent *ptr;
+    int if_have_file = 0;
+
+    printf("File:\n");
+    printf("<select name=\"file\">\n");
+    //printf("<option value=\"choose\" selected=\"selected\">Please choose</option>\n");
+    printf("<option value=\"choose file\" selected=\"selected\">请选择文件</option>\n");
+
+    if ((dir = opendir(DIR_UPLOAD)) != NULL) 
+    {
+        while ((ptr = readdir(dir)) != NULL)
+        {
+            if (ptr->d_type == DT_REG) 
+            {
+                //sprintf(buffer, "%s/%s",DIR_UPLOAD, ptr->d_name);
+                if (if_have_file == 0) 
+                {
+                    printf("<option value=\"all_file\">All files</option>\n");
+                    if_have_file = 1;
+                }
+                printf("<option value=%s>%s</option>\n",ptr->d_name, ptr->d_name);
+            }
+        }
+    }
+    printf("</select>\n");
+    #endif
+
+    printf("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\n");
+
     printf("Device:\n");
     printf("<select name=\"choose\">\n");
-    printf("<option value=\"Please choose\" selected=\"selected\">请选择设备</option>\n");
-
+    printf("<option value=\"choose device\" selected=\"selected\">请选择设备</option>\n");
 #if 1
     int len;
     int client_sock;
@@ -113,7 +144,7 @@ int main(int argc, const char *argv[])
                         {
                             if (if_have_live_device == 0) 
                             {
-                                printf("<option value=\"all\">All devices</option>\n");
+                                printf("<option value=\"all_device\">All devices</option>\n");
                                 if_have_live_device = 1;
                             }
                             *p = '\0';

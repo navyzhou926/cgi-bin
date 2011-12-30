@@ -28,7 +28,7 @@ void *pthread(void *arg)
     sleep(3);
     if (none == 1) 
     {
-        printf("<br>Nothing to sync !\n");
+        printf("<br>Nothing to update!\n");
         //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
         exit(1);
     }
@@ -45,9 +45,13 @@ int main(int argc, const char *argv[])
     int i = 0;
     //char *ready[8] = {"ready1", "ready2", "ready3", "ready4", "ready5"};
     int num = 0;
-
+    int if_is_all_file = 0;
+    int if_is_all_device = 0;
+    char *p = NULL, *q = NULL;
 	int len;
     char *send_buffer = NULL;
+    char *send_file = NULL;
+
 	int client_sock;
 	socklen_t server_len;
 	struct sockaddr_in server;
@@ -63,33 +67,90 @@ int main(int argc, const char *argv[])
     {
         //printf("read %d len<br>", ret);
     }
-    printf("%s<br>", data);
+    //printf("%s<br>", data);
+    //file=choose+file&choose=choose+device
 
-    if (strcmp(data + 7, "Please+choose") == 0) 
+    //file=choose+file&choose=192.168.11.168@00%3A44%3A3b%3Ae6%3A00%3A01
+    //file=choose+file&choose=all_device
+
+    //file=lib.tar.gz&choose=choose+device
+    //file=all_file&choose=choose+device
+
+    //file=all_file&choose=all_device
+    //file=lib.tar.gz&choose=all_device
+    //file=all_file&choose=192.168.11.252@00%3A0c%3A29%3A3a%3A3e%3A87
+    //file=lib.tar.gz&choose=192.168.11.168@00%3A44%3A3b%3Ae6%3A00%3A01
+
+    if (strncmp(data + 5, "choose+file", 11) == 0) 
     {
-        //send_html(5, 18, "Please choose device to update!");
+        printf("<h2>请选择要更新的文件!<h2>\n");
+        //printf("<meta http-equiv=\"refresh\"content=\"1; url=http://%s/sync.html\">", ip);
+        return 0;
+    }
+    if (strstr(data + 5, "choose=choose+device") != NULL) 
+    {
         printf("<h2>请选择要更新的设备!<h2>\n");
         //printf("<meta http-equiv=\"refresh\"content=\"1; url=http://%s/sync.html\">", ip);
         return 0;
     }
-    else if (strcmp(data + 7, "all") == 0)
+    if (strncmp(data + 5, "all_file", 8) == 0) 
+    {
+        if_is_all_file = 1;
+    }
+    if (strstr(data + 5, "choose=all_device") != NULL) 
+    {
+        if_is_all_device = 1;
+    }
+
+    if (if_is_all_file == 0) //single file
+    {
+    //file=lib.tar.gz&choose=all_device
+        p = data + 5;
+        while (*p != '\0')
+        {
+            if (*p == '&') 
+            {
+                if (strncmp(p + 1, "choose=", 7) == 0) 
+                {
+                    *p = '\0';
+                    send_file = data + 5;
+                    break;
+                }
+            }
+            p++;
+        }
+    }
+
+    if (if_is_all_device == 1) //all devices
+    {
         send_buffer = "readyall";
-    else
+    }
+    else  // single device
     {
     #if 1
     //data = choose=192.168.11.252@00%3A0c%3A29%3A3a%3A3e%3A87
-        char *p = NULL, *q = NULL;
         char *receive_ip = NULL;
+        char *temp;
         char receive_mac[36] = {0};
         char receive_device_info[72] = {0};
 
-        p = data + 7;
+
+        if (if_is_all_file == 1) //single file
+        {
+            p = data + 21;  //strlen("file=all_file&choose=") == 21
+        }
+        else
+        {
+            p = data + 5 + strlen(send_file) + 8;       
+            //file=lib.tar.gz&choose=192.168.11.168@00%3A44%3A3b%3Ae6%3A00%3A01
+        }
+        temp = p;
         while (*p != '\0')
         {
             if (*p == '@') 
             {
                 *p = '\0';
-                receive_ip = data + 7;
+                receive_ip = temp;
                 q = p + 1;
                 for (i = 0; i < 5; i++) 
                 {
@@ -100,7 +161,7 @@ int main(int argc, const char *argv[])
                 }
                 receive_mac[i*3] = *q;
                 receive_mac[i*3 + 1] = *(q + 1);
-                printf("receive: %s@%s\n",receive_ip, receive_mac);
+                //printf("receive: %s@%s\n",receive_ip, receive_mac);
                 sprintf(receive_device_info, "%s@%s", receive_ip, receive_mac);
                 break;
             }
@@ -111,6 +172,13 @@ int main(int argc, const char *argv[])
      #endif
         //send_buffer = "ready1";
     }
+    #if 0
+    printf("<br>if_is_all_file = %d<br>\n",if_is_all_file);
+    printf("if_is_all_device = %d<br>\n",if_is_all_device);
+    printf("send_file: %s<br>\n",send_file);
+    printf("send_buffer: %s<br>\n",send_buffer);
+    return 0;
+    #endif
 
     //sprintf(value, "select * from register_info where username='%s';", str.username);
     #if 1
@@ -121,7 +189,7 @@ int main(int argc, const char *argv[])
 	}
 	else
 	{
-        printf("<br>UDP create socket ok!<br>\n");
+        //printf("<br>UDP create socket ok!<br>\n");
 	}
 
     int optval = 1;
@@ -143,7 +211,8 @@ int main(int argc, const char *argv[])
 
     server_len = sizeof(server);
     len = sendto(client_sock, send_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server, server_len);
-    if (strcmp(send_buffer, "readyall") != 0) //just update one device
+    //if (strcmp(send_buffer, "readyall") != 0) //just update one device
+    if (if_is_all_device == 0) //single device 
     {
     #if 1
         server_len = sizeof(server);
@@ -165,7 +234,7 @@ ready_again:
                 fprintf(stderr, "can't pthread_join thread:%s",strerror(error));
                 exit(1);
             }
-            printf("<br>UDP Connect server successfully !\n");
+            //printf("<br>UDP Connect server successfully !\n");
             memcpy((void *)&server_udp[num++], (void *)&server, server_len);
         }
         else
@@ -213,7 +282,7 @@ ready_again:
                             fprintf(stderr, "can't pthread_join thread:%s",strerror(error));
                             exit(1);
                         }
-                        printf("<br>UDP Connect server successfully !\n");
+                        //printf("<br>UDP Connect server successfully !\n");
                         memcpy((void *)&server_udp[num++], (void *)&server, server_len);
                     }
                 }
@@ -222,7 +291,7 @@ ready_again:
     }
     if (num == 0) 
     {
-        printf("<br>Nothing to sync !\n");
+        printf("<br>Nothing to update!\n");
         error = pthread_cancel(tid);
         //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
         exit(1);
@@ -260,19 +329,19 @@ ready_again:
         }
         else
         {
-            printf("<br>TCP connect server successfully !\n");
+            //printf("<br>TCP connect server successfully !\n");
         }
 
     //Opendir
         FILE *fd;
-        DIR *dir;
-        //char *filename[256] = {"PictureFile", "MediaFile", "TextFile", "OtherFile"};
         char path[1024];
-        struct dirent *ptr;
 
-        memset(path, 0, sizeof(path));
-        //for (i = 0; i < 4; i++) 
+        if (if_is_all_file == 1) 
         {
+            DIR *dir;
+            struct dirent *ptr;
+
+            memset(path, 0, sizeof(path));
             //sprintf(path, "%s/%s", DIR_UPLOAD, *(filename + i));
             if ((dir = opendir(DIR_UPLOAD)) != NULL) 
             {
@@ -296,7 +365,7 @@ ready_again:
                         strcpy(buffer + 4, ptr->d_name);
                         //sprintf(value, "%d%c%s", i, '1', ptr->d_name);//1 means filename not file data
                         len = send(client_sock_tcp, buffer, BUFFER_SIZE, 0);
-                        printf("<br><br>Sending %s",buffer + 4);
+                        printf("<br><br>Sending ...%s",buffer + 4);
                         //buffer[0] =  i + '0'; buffer[1] = '0';
                         buffer[0] =  '0'; buffer[1] = '0';
                         while (1)
@@ -322,8 +391,49 @@ ready_again:
                 }
                 closedir(dir);
             }
+            close(client_sock_tcp);
         }
-        close(client_sock_tcp);
+        else
+        {
+            sprintf(path, "%s/%s",DIR_UPLOAD, send_file);
+            fd = fopen(path, "r");
+            if(fd == NULL)
+            {
+                printf("<br>can not open file");
+                return 0;
+            }
+            memset(buffer, 0, sizeof(buffer));
+            //buffer[0] =  i + '0'; buffer[1] = '1';
+            buffer[0] =  '0'; buffer[1] = '1';
+            len = strlen(send_file);
+            buffer[2] = (len + 4)>>8;
+            buffer[3] = (len + 4)&0x00ff;
+            strcpy(buffer + 4, send_file);
+            len = send(client_sock_tcp, buffer, BUFFER_SIZE, 0);
+            printf("<br><br>Sending ...%s",buffer + 4);
+            //buffer[0] =  i + '0'; buffer[1] = '0';
+            buffer[0] =  '0'; buffer[1] = '0';
+            while (1)
+            {
+                len = fread(buffer + 4, 1, BUFFER_SIZE-4, fd);
+                //printf("<br>read byte = %d",len);
+                if (len > 0) 
+                {
+                    buffer[2] = (len + 4)>>8;
+                    buffer[3] = (len + 4)&0x00ff;
+                    //printf("<br>read byte = %d",len + 4);
+                    //sprintf(value, "%d%c%s", i, '0', buffer);//0 means file data
+                    len = send(client_sock_tcp, buffer, BUFFER_SIZE, 0);
+                    //printf("&nbsp send byte = %d", len);
+                }
+                if (feof(fd)) 
+                {
+                    fclose(fd);
+                    break;
+                }
+            }
+            close(client_sock_tcp);
+        }
     }
 
 	close(client_sock);
