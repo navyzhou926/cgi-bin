@@ -8,7 +8,7 @@
 #gcc start.c global.c -Wall -o start.cgi -lsqlite3
 #gcc stop.c global.c -Wall -o stop.cgi -lsqlite3
 gcc syncadm.c global.c -Wall -o syncadm.cgi -lpthread
-gcc sync.c global.c -Wall -o sync.cgi  -lpthread
+#gcc sync.c global.c -Wall -o sync.cgi  -lpthread
 gcc update_data.c global.c -Wall -o update_data.cgi -lpthread 
 #gcc test.c global.c -Wall -o test.cgi
 #gcc upload.c global.c -Wall -o upload.cgi

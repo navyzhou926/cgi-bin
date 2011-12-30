@@ -40,15 +40,14 @@ int main(int argc, const char *argv[])
 {
     int error = 0;
     int ret = 0;
-	char data[4096];
-    char buffer[4096];
+	char data[4096] = {0};
+    char buffer[4096] = {0};
     int i = 0;
-    char *ready[8] = {"ready1", "ready2", "ready3", "ready4", "ready5"};
+    //char *ready[8] = {"ready1", "ready2", "ready3", "ready4", "ready5"};
     int num = 0;
 
 	int len;
-    char *adm;
-    char *send_buffer;
+    char *send_buffer = NULL;
 	int client_sock;
 	socklen_t server_len;
 	struct sockaddr_in server;
@@ -59,7 +58,6 @@ int main(int argc, const char *argv[])
 
     pthread_t tid;
 
-    #if 1
 	printf("Content-Type: text/html\n\n");
     while ((ret = fread(data, sizeof(data), 1, stdin)) != 0)
     {
@@ -67,19 +65,52 @@ int main(int argc, const char *argv[])
     }
     printf("%s<br>", data);
 
-    adm = data + 7;
-    if (strcmp(adm, "Please+choose") == 0) 
+    if (strcmp(data + 7, "Please+choose") == 0) 
     {
         //send_html(5, 18, "Please choose device to update!");
         printf("<h2>请选择要更新的设备!<h2>\n");
         //printf("<meta http-equiv=\"refresh\"content=\"1; url=http://%s/sync.html\">", ip);
         return 0;
     }
-    else if (strcmp(adm, "all") == 0)
+    else if (strcmp(data + 7, "all") == 0)
         send_buffer = "readyall";
     else
-        send_buffer = *(ready + *(data + 10)-'1');
-    #endif
+    {
+    #if 1
+    //data = choose=192.168.11.252@00%3A0c%3A29%3A3a%3A3e%3A87
+        char *p = NULL, *q = NULL;
+        char *receive_ip = NULL;
+        char receive_mac[36] = {0};
+        char receive_device_info[72] = {0};
+
+        p = data + 7;
+        while (*p != '\0')
+        {
+            if (*p == '@') 
+            {
+                *p = '\0';
+                receive_ip = data + 7;
+                q = p + 1;
+                for (i = 0; i < 5; i++) 
+                {
+                    receive_mac[i*3] = *q;
+                    receive_mac[i*3 + 1] = *(q + 1);
+                    receive_mac[i*3 + 2] = ':';
+                    q += 5;
+                }
+                receive_mac[i*3] = *q;
+                receive_mac[i*3 + 1] = *(q + 1);
+                printf("receive: %s@%s\n",receive_ip, receive_mac);
+                sprintf(receive_device_info, "%s@%s", receive_ip, receive_mac);
+                break;
+            }
+            p++;
+        }
+        //send_buffer = 192.168.11.252@00:0c:29:3a:3e:87 
+        send_buffer = receive_device_info;
+     #endif
+        //send_buffer = "ready1";
+    }
 
     //sprintf(value, "select * from register_info where username='%s';", str.username);
     #if 1
@@ -90,7 +121,7 @@ int main(int argc, const char *argv[])
 	}
 	else
 	{
-        //printf("UDP create socket ok!\n");
+        printf("<br>UDP create socket ok!<br>\n");
 	}
 
     int optval = 1;
@@ -111,16 +142,14 @@ int main(int argc, const char *argv[])
     }
 
     server_len = sizeof(server);
-    //send_buffer = "heartbeat";//navy
     len = sendto(client_sock, send_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server, server_len);
     if (strcmp(send_buffer, "readyall") != 0) //just update one device
     {
+    #if 1
         server_len = sizeof(server);
-ready_agian:
+ready_again:
         len = recvfrom(client_sock, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server, &server_len);
-        //printf("%s\n",buffer); //navy
-        //return 0; //navy
-        //printf("<br>%s<br>", buffer);
+        //printf("<br>buffer: %s<br>\n",buffer);
         if (len < 0) 
         {
             close(client_sock);
@@ -140,7 +169,8 @@ ready_agian:
             memcpy((void *)&server_udp[num++], (void *)&server, server_len);
         }
         else
-            goto ready_agian;
+            goto ready_again;
+    #endif
     }
     else 
     {
@@ -212,14 +242,17 @@ ready_agian:
         {
             //printf("<br>TCP create socket ok!\n");
         }
-        //bzero(&server_tcp, sizeof(server_tcp));
-        //server_tcp.sin_family = AF_INET;
-        //server_tcp.sin_port = htons(SERVER_PORT);
+        #if 0
+        bzero(&server_tcp, sizeof(server_tcp));
+        server_tcp.sin_family = AF_INET;
+        server_tcp.sin_port = htons(SERVER_PORT_TCP);
         //server_tcp.sin_addr.s_addr = inet_addr(*(ip + *(data + 10)-'1'));
-        //server_tcp.sin_addr.s_addr = inet_addr("10.1.14.45");
+        server_tcp.sin_addr.s_addr = inet_addr("192.168.11.252");
+        #else
         server_tcp = server_udp[k];
         server_tcp.sin_port = htons(SERVER_PORT_TCP);
         server_len = sizeof(server_tcp);
+        #endif
         if(connect(client_sock_tcp, (struct sockaddr *)&server_tcp, server_len) < 0)
         {
             fprintf(stderr, "%s\n", strerror(errno));
@@ -255,7 +288,8 @@ ready_agian:
                             return 0;
                         }
                         memset(buffer, 0, sizeof(buffer));
-                        buffer[0] =  i + '0'; buffer[1] = '1';
+                        //buffer[0] =  i + '0'; buffer[1] = '1';
+                        buffer[0] =  '0'; buffer[1] = '1';
                         len = strlen(ptr->d_name);
                         buffer[2] = (len + 4)>>8;
                         buffer[3] = (len + 4)&0x00ff;
@@ -263,7 +297,8 @@ ready_agian:
                         //sprintf(value, "%d%c%s", i, '1', ptr->d_name);//1 means filename not file data
                         len = send(client_sock_tcp, buffer, BUFFER_SIZE, 0);
                         printf("<br><br>Sending %s",buffer + 4);
-                        buffer[0] =  i + '0'; buffer[1] = '0';
+                        //buffer[0] =  i + '0'; buffer[1] = '0';
+                        buffer[0] =  '0'; buffer[1] = '0';
                         while (1)
                         {
                             len = fread(buffer + 4, 1, BUFFER_SIZE-4, fd);
