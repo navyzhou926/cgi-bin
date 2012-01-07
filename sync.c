@@ -17,9 +17,9 @@
 #include "global.h"
 
 #define BUFFER_SIZE     1024 
-#define SERVER_PORT	    8000	
 
 int none = 1;
+//char ip[36] = {0};
 
 struct string
 {
@@ -29,11 +29,12 @@ struct string
 
 void *pthread(void *arg)
 {
-    sleep(5);
+    sleep(3);
     if (none == 1) 
     {
-        printf("<br>Nothing to sync !\n");
-        printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
+        printf("<h2><br>Nothing to update!<h2>\n");
+        //get_local_ip(ip, NULL);
+        //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
         exit(1);
     }
 
@@ -67,10 +68,9 @@ int main(int argc, const char *argv[])
     //while((ret = fread(buf, 1, sizeof(buf), stdin)) != 0)
     while ((ret = fread(data, sizeof(data), 1, stdin)) != 0)
     {
-        //printf("read %d len<br>", ret);
-        //printf("%s<br>", data);
-        //return 0;
     }
+    //printf("read %d len<br>", ret);
+    //printf("%s<br>", data);
 
     str.ip = data + 8;
     if ((p = strstr(data, "&port=")) != NULL)
@@ -80,22 +80,28 @@ int main(int argc, const char *argv[])
     str.port = p + 6;
     if (strlen(str.ip) > 15)
     {
-        send_html(5, 20, "Ip address is overlength !");
-        printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
+        //send_html(5, 20, "Ip address is overlength !");
+        printf("<h2>Ip 地址过长请重新输入!<h2>\n");
+        //get_local_ip(ip, NULL);
+        //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
         return 0;
     }
-    //printf("ip %s<br>",str.ip);
-    //printf("port %s<br>",str.port);
+    printf_debug("ip: %s...<br>",str.ip);
+    printf_debug("port: %s...<br>",str.port);
     if (strlen(str.port) > 5)
     {
-        send_html(5, 18, "Port number is overlength !");
-        printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
+        //send_html(5, 18, "Port number is overlength !");
+        printf("<h2>端口号过长，请重新输入!<h2>\n");
+        //get_local_ip(ip, NULL);
+        //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
         return 0;
     }
     if (str.ip == p && *(str.port) == '\0') 
     {
-        send_html(5, 22, "Blank ip address and port !");
-        printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
+        //send_html(5, 22, "Blank ip address and port !");
+        printf("<h2>空的IP地址或端口号!<h2>\n");
+        //get_local_ip(ip, NULL);
+        //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
         return 0;
     }
     for (i = 0; *(str.ip + i) != '\0'; i++) 
@@ -106,8 +112,10 @@ int main(int argc, const char *argv[])
         }
         if (isdigit(*(str.ip + i)) == 0) 
         {
-            send_html(5, 24, "Ip address wrong !");
-            printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
+            //send_html(5, 24, "Ip address wrong !");
+            printf("<h2>错误的IP地址，请重新输入!<h2>\n");
+            //get_local_ip(ip, NULL);
+            //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
             return 0;
         }
     }
@@ -115,8 +123,10 @@ int main(int argc, const char *argv[])
     {
         if (isdigit(*(str.port + i)) == 0) 
         {
-            send_html(5, 22, "Port number wrong !");
-            printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
+            //send_html(5, 22, "Port number wrong !");
+            printf("<h2>错误的端口号，请重新输入!<h2>\n");
+            //get_local_ip(ip, NULL);
+            //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
             return 0;
         }
     }
@@ -129,14 +139,14 @@ int main(int argc, const char *argv[])
 	}
 	else
 	{
-        //printf("UDP create socket ok!\n");
+        printf_debug("<br>UDP create socket ok!<br>\n");
 	}
 
     int optval = 1;
     bzero(&server, sizeof(server));
     server.sin_family = AF_INET;
-    //server.sin_port = htons(atoi(SERVER_PORT));
-    server.sin_port = htons(SERVER_PORT);
+    //server.sin_port = htons(SERVER_PORT);
+    server.sin_port = htons(atoi(str.port));
     //server.sin_addr.s_addr = htons(INADDR_ANY);
     server.sin_addr.s_addr = inet_addr("255.255.255.255");
     setsockopt(client_sock, SOL_SOCKET, SO_BROADCAST, &optval, sizeof(optval)); 
@@ -152,8 +162,9 @@ int main(int argc, const char *argv[])
     }
     #endif
 
+    strcpy(buffer, "readyall");
     server_len = sizeof(server);
-    len = sendto(client_sock, "ready1", BUFFER_SIZE, 0, (struct sockaddr *)&server, server_len);
+    len = sendto(client_sock, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server, server_len);
     len = recvfrom(client_sock, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server, &server_len);
     if (len < 0) 
     {
@@ -170,7 +181,7 @@ int main(int argc, const char *argv[])
             fprintf(stderr, "can't pthread_join thread:%s",strerror(error));
             exit(1);
         }
-        printf("<br>UDP Connect server successfully !\n");
+        printf_debug("<br>UDP Connect server successfully !\n");
         memcpy((void *)&server_udp, (void *)&server, server_len);
     }
 
@@ -183,7 +194,7 @@ int main(int argc, const char *argv[])
 	}
 	else
 	{
-        //printf("<br>TCP create socket ok!\n");
+        printf_debug("<br>TCP create socket ok!\n");
 	}
     /*
 	bzero(&server_tcp, sizeof(server_tcp));
@@ -192,7 +203,8 @@ int main(int argc, const char *argv[])
 	server_tcp.sin_addr.s_addr = inet_addr(str.ip);
     */
     server_tcp = server_udp;
-    server_tcp.sin_port = htons(atoi(str.port));
+    //server_tcp.sin_port = htons(atoi(str.port));
+    server_tcp.sin_port = htons(SERVER_PORT_TCP);
 	server_len = sizeof(server_tcp);
 	if(connect(client_sock_tcp, (struct sockaddr *)&server_tcp, server_len) < 0)
 	{
@@ -201,50 +213,46 @@ int main(int argc, const char *argv[])
 	}
 	else
 	{
-        printf("<br>TCP connect server successfully !\n");
+        printf_debug("<br>TCP connect server successfully !\n");
 	}
 
     //Opendir
-    #if 1
-    FILE *fd;
-    DIR *dir;
-    char *filename[256] = {"PictureFile", "MediaFile", "TextFile", "OtherFile"};
-    char path[1024];
-    struct dirent *ptr;
 
-    memset(path, 0, sizeof(path));
-    for (i = 0; i < 4; i++) 
-    {
-        sprintf(path, "/home/navyzhou/upload-folder/%s", *(filename + i));
-        if ((dir = opendir(path)) != NULL) 
+        FILE *fd;
+        DIR *dir;
+        char path[1024];
+        struct dirent *ptr;
+
+        memset(path, 0, sizeof(path));
+        //sprintf(path, "%s/%s", DIR_UPLOAD, *(filename + i));
+        if ((dir = opendir(DIR_UPLOAD)) != NULL) 
         {
             while ((ptr = readdir(dir)) != NULL)
             {
                 if (ptr->d_type == DT_REG) 
                 {
-                    sprintf(path, "/home/navyzhou/upload-folder/%s/%s",*(filename + i), ptr->d_name);
+                    sprintf(path, "%s/%s",DIR_UPLOAD, ptr->d_name);
                     fd = fopen(path, "r");
                     if(fd == NULL)
                     {
-                        printf("<br>can not open file");
+                        printf("<br><h2>can not open file<h2>");
                         return 0;
                     }
                     memset(buffer, 0, sizeof(buffer));
-                    buffer[0] =  i + '0'; buffer[1] = '1';
+                    //buffer[0] =  i + '0'; buffer[1] = '1';
+                    buffer[0] =  '0'; buffer[1] = '1';
                     len = strlen(ptr->d_name);
                     buffer[2] = (len + 4)>>8;
                     buffer[3] = (len + 4)&0x00ff;
                     strcpy(buffer + 4, ptr->d_name);
                     //sprintf(value, "%d%c%s", i, '1', ptr->d_name);//1 means filename not file data
                     len = send(client_sock_tcp, buffer, BUFFER_SIZE, 0);
-                    printf("<br><br>Sending %s",buffer + 4);
-                    #if 1
-                    buffer[0] =  i + '0'; buffer[1] = '0';
+                    printf("<h2><br>Sending %s ...<h2>",buffer + 4);
+                    //buffer[0] =  i + '0'; buffer[1] = '0';
+                    buffer[0] =  '0'; buffer[1] = '0';
                     while (1)
                     {
                         len = fread(buffer + 4, 1, BUFFER_SIZE-4, fd);
-                        //printf("<br>read byte = %d",len);
-                        #if 1
                         if (len > 0) 
                         {
                             buffer[2] = (len + 4)>>8;
@@ -252,22 +260,18 @@ int main(int argc, const char *argv[])
                             //printf("<br>read byte = %d",len + 4);
                             //sprintf(value, "%d%c%s", i, '0', buffer);//0 means file data
                             len = send(client_sock_tcp, buffer, BUFFER_SIZE, 0);
-                            //printf("&nbsp send byte = %d", len);
                         }
-                        #endif
                         if (feof(fd)) 
                         {
                             fclose(fd);
                             break;
                         }
                     }
-                    #endif
                 }
             }
             closedir(dir);
         }
-    }
-    #endif
+        close(client_sock_tcp);
     /*
     if((len = recv(client_sock_tcp, buffer, BUFFER_SIZE, 0)) > 0)
     {
@@ -275,7 +279,6 @@ int main(int argc, const char *argv[])
         printf("<br>%s\n",buffer);
     }
     */
-	close(client_sock_tcp);
     #endif
 
     #if 0
@@ -298,8 +301,9 @@ int main(int argc, const char *argv[])
 	close(client_sock);
     //exit(EXIT_SUCCESS);
 
-    printf("<br><br>Sync data successfully!\n");
-    //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
+    printf("<h2><br>Update data successfully!<h2>\n");
+    //get_local_ip(ip, NULL);
+    //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
     return 0;
 }
 

@@ -72,7 +72,9 @@ int main(int argc, const char *argv[])
         if (strcmp(delete_file_name, "%E8%AF%B7%E9%80%89%E6%8B%A9%E6%96%87%E4%BB%B6") == 0) 
         {
             printf("<h2>请选择要删除的文件<h2><br>\n");
-            //printf("<meta http-equiv=\"refresh\"content=\"1; url=http://192.168.11.252/delete.html\">");
+            //char ip[36] = {0};
+            //get_local_ip(ip, NULL);
+            //printf("<meta http-equiv=\"refresh\"content=\"1; url=http://%s/delete.html\">",ip);
             exit(1);
         }
 
@@ -82,7 +84,7 @@ int main(int argc, const char *argv[])
         else
             printf("<h2>Succeed to delete %s<h2><br>",delete_file_name);
     }
-    //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/delete.html\">");
+    //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/delete.html\">",ip);
 
     return 0;
 }

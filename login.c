@@ -11,7 +11,6 @@ struct string
 
 int rscallback(void *p, int argc, char **argv, char **argvv)
 {
-    int i;
     *(int *)p = 0;
 
         if (strcmp(argv[1], str.username) == 0) 
@@ -58,7 +57,7 @@ int main(int argc, const char *argv[])
         printf("\nUsername can not have blank space !\n");
         return 0;
     }
-    if (len = strlen(p) > 20)
+    if ((len = strlen(p)) > 20)
     {
         printf("\nUsername is overlongth !\n");
         return 0;
@@ -72,7 +71,7 @@ int main(int argc, const char *argv[])
     }
     p = strstr(q, "&log=Login");
     *p = '\0';
-    if (len = strlen(q) > 20)
+    if ((len = strlen(q)) > 20)
     {
         printf("\nPassword is overlongth !\n");
         return 0;

@@ -11,7 +11,6 @@
 #include "global.h"
 
 #define BUFFER_SIZE     1024 
-#define SERVER_PORT	    8000	
 
 int main(int argc, const char *argv[])
 {

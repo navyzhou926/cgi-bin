@@ -209,13 +209,17 @@ int main(int argc, const char *argv[])
 
     server_len = sizeof(server);
     len = sendto(client_sock, send_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server, server_len);
+printf("1\n");
     //if (strcmp(send_buffer, "readyall") != 0) //just update one device
     if (if_is_all_device == 0) //single device 
     {
+    #if 1
         server_len = sizeof(server);
 ready_again:
+        printf("2\n");
         len = recvfrom(client_sock, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server, &server_len);
         printf_debug("<br>buffer: %s<br>\n",buffer);
+        printf("3\n");
 
         if (len < 0) 
         {
@@ -237,6 +241,7 @@ ready_again:
         }
         else
             goto ready_again;
+    #endif
     }
     else 
     {
@@ -293,9 +298,11 @@ ready_again:
         //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
         exit(1);
     }
+    printf("3\n");
 
     //TCP
     int k = 0;
+    //for (k = 0; k < num; k++) 
     for (k = num-1; k >= 0; k--) 
     {
         if ((client_sock_tcp = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -319,6 +326,7 @@ ready_again:
         server_len = sizeof(server_tcp);
         //sleep(10);
         #endif
+        printf("1\n");
         if(connect(client_sock_tcp, (struct sockaddr *)&server_tcp, server_len) < 0)
         {
             fprintf(stderr, "%s\n", strerror(errno));
@@ -407,7 +415,7 @@ ready_again:
             buffer[3] = (len + 4)&0x00ff;
             strcpy(buffer + 4, send_file);
             len = send(client_sock_tcp, buffer, BUFFER_SIZE, 0);
-            printf("<h2><br>Sending %s ...<h2>",buffer + 4);
+            printf("<h2><br>Sending ...%s<h2>",buffer + 4);
             //buffer[0] =  i + '0'; buffer[1] = '0';
             buffer[0] =  '0'; buffer[1] = '0';
             while (1)
