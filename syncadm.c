@@ -511,7 +511,6 @@ tcp_end:
     }
 
     close(client_sock);
-    //exit(EXIT_SUCCESS);
     if (success_count == num) 
     {
         printf("<h2><br>All devices update data successfully!<h2>\n");
