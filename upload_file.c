@@ -7,6 +7,7 @@ int main(int argc, const char *argv[])
 	printf("Content-Type: text/html\n\n");
 
     printf("<html>\n");
+    //printf("<meta http-equiv=\"Content-Type content=\"text/html;charset=utf-8\"\">");
     printf("<body bgcolor=\"#ffc0cb\">\n");
     printf("<head> <title>upload file</title> </head>\n");
     printf("<font size=3 color=\"#9932cc\">\n");

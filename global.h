@@ -1,6 +1,6 @@
 #ifndef _GLOABL_
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define printf_debug(fmt, arg...)  printf(fmt, ##arg)
