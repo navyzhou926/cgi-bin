@@ -80,7 +80,7 @@ int main(int argc, const char *argv[])
     str.port = p + 6;
     if (strlen(str.ip) > 15)
     {
-        //send_html(5, 20, "Ip address is overlength !");
+        //send_html(0, 0, "Ip address is overlength !");
         printf("<h2>Ip 地址过长请重新输入!<h2>\n");
         //get_local_ip(ip, NULL);
         //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
@@ -90,7 +90,7 @@ int main(int argc, const char *argv[])
     printf_debug("port: %s...<br>",str.port);
     if (strlen(str.port) > 5)
     {
-        //send_html(5, 18, "Port number is overlength !");
+        //send_html(0, 0, "Port number is overlength !");
         printf("<h2>端口号过长，请重新输入!<h2>\n");
         //get_local_ip(ip, NULL);
         //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
@@ -98,7 +98,7 @@ int main(int argc, const char *argv[])
     }
     if (str.ip == p && *(str.port) == '\0') 
     {
-        //send_html(5, 22, "Blank ip address and port !");
+        //send_html(0, 0, "Blank ip address and port !");
         printf("<h2>空的IP地址或端口号!<h2>\n");
         //get_local_ip(ip, NULL);
         //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
@@ -112,7 +112,7 @@ int main(int argc, const char *argv[])
         }
         if (isdigit(*(str.ip + i)) == 0) 
         {
-            //send_html(5, 24, "Ip address wrong !");
+            //send_html(0, 0, "Ip address wrong !");
             printf("<h2>错误的IP地址，请重新输入!<h2>\n");
             //get_local_ip(ip, NULL);
             //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);
@@ -123,7 +123,7 @@ int main(int argc, const char *argv[])
     {
         if (isdigit(*(str.port + i)) == 0) 
         {
-            //send_html(5, 22, "Port number wrong !");
+            //send_html(0, 0, "Port number wrong !");
             printf("<h2>错误的端口号，请重新输入!<h2>\n");
             //get_local_ip(ip, NULL);
             //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://%s/sync.html\">",ip);

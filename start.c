@@ -19,6 +19,7 @@ int main(int argc, const char *argv[])
     char buffer[4096];
     int i = 0;
     char *start[7] = {"start1", "start2", "start3", "start4", "start5"};
+    char ip[36] = {0};
 
 	int len;
 	int client_sock;
@@ -35,6 +36,12 @@ int main(int argc, const char *argv[])
     }
     //printf("%s<br>", data);
 
+    if (get_local_ip(ip, NULL) != 0)  
+    {   
+        printf("Server is unavailable\n");
+        exit(1);
+    }
+
     if (strstr(data, "startall") != NULL) 
     {
         strcpy(buffer, "startall");
@@ -43,8 +50,9 @@ int main(int argc, const char *argv[])
     {
         if (*data == 's') 
         {
-            send_html(4, 16, "Please choose AD Machine !");
-            printf("<meta http-equiv=\"refresh\"content=\"1; url=http://192.168.11.252/adm_manage.html\">");
+            send_html(0, 0, "Please choose AD Machine !");
+            //printf("<meta http-equiv=\"refresh\"content=\"1; url=http://192.168.11.252/adm_manage.html\">");
+            printf("<meta http-equiv=\"refresh\"content=\"1; url=http://%s/adm_manage.html\">",ip);
             return 0;
         }
         for (i = 0; i < 5; i++) 
@@ -84,8 +92,9 @@ int main(int argc, const char *argv[])
 	close(client_sock);
     //exit(EXIT_SUCCESS);
 
-    send_html(4, 22, "Start successfully !");
-    printf("<meta http-equiv=\"refresh\"content=\"1; url=http://192.168.11.252/adm_manage.html\">");
+    send_html(0, 0, "Start successfully !");
+    //printf("<meta http-equiv=\"refresh\"content=\"1; url=http://192.168.11.252/adm_manage.html\">");
+            printf("<meta http-equiv=\"refresh\"content=\"1; url=http://%s/adm_manage.html\">",ip);
     return 0;
 }
 

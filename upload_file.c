@@ -4,7 +4,8 @@
 
 int main(int argc, const char *argv[])
 {
-	printf("Content-Type: text/html\n\n");
+    printf("Content-Type: text/html\n\n");
+    //printf("Content-Type: image/gif\n\n");
 
     printf("<html>\n");
     //printf("<meta http-equiv=\"Content-Type content=\"text/html;charset=utf-8\"\">");
@@ -23,7 +24,7 @@ int main(int argc, const char *argv[])
     printf("<td align=\"right\"> <input type=\"submit\" value=\"Upload\"> </td> </form> </tr>\n");
     printf("</table>\n");
 
-    //printf("<img src=\"4.gif\" alt=\"happy\" align=middle border=\"0\">\n");
+    //printf("<img id=\"imgframe\" src=\"/usr/local/apache2/htdocs/images/4.gif\" alt=\"happy\" align=middle border=\"0\">\n");
     //printf("<img src=\"../htdocs/images/4.gif\" alt=\"happy\" align=middle border=\"0\">\n");
     //printf("<br><iframe src=\"../htdocs/images/5.jpg\"></iframe>\n");
     //printf("<iframe src=\"../htdocs/images/4.jpg\"></iframe>\n");
