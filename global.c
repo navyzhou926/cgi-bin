@@ -69,10 +69,21 @@ int get_local_ip(char *out_ip, char *out_mac)
 
     if (out_mac != NULL) 
     {
-        memset(ifreq, 0, sizeof(ifreq));
-        strncpy(ifreq->ifr_name, "eth0", sizeof(ifreq->ifr_name)-1);
-        if (ioctl(sockfd, SIOCGIFHWADDR, ifreq) < 0)
+        for (i = 0; i < 10; i++)  //get mac 
+        {   
+            memset(ifreq, 0, sizeof(ifreq));
+            sprintf(ifreq->ifr_name,"eth%c",0x30+i);
+            //strncpy(ifreq->ifr_name, "eth0", sizeof(ifreq->ifr_name)-1);
+            if (ioctl(sockfd, SIOCGIFHWADDR, ifreq) < 0)
+                continue;
+            else
+                break;
+        }   
+        if (i >= 10) 
+        {
+            close(sockfd);
             return -1;
+        }
         sprintf(out_mac, "%02x:%02x:%02x:%02x:%02x:%02x",
         (unsigned char)ifreq->ifr_hwaddr.sa_data[0],
         (unsigned char)ifreq->ifr_hwaddr.sa_data[1],

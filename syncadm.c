@@ -254,7 +254,7 @@ ready_again:
                 fprintf(stderr, "%s\n", strerror(errno));
                 continue;
             }
-            else if(ret == 0)
+            else if(ret == 0)  //timeout
             {
                 break;
             }
@@ -337,7 +337,7 @@ ready_again:
                 goto tcp_end;
                 //logdown(ERROR,"connect error :%s\n",strerror(errno));
             }
-            else //esle
+            else
             {
                 struct timeval tm;
                 tm.tv_sec = 3;
@@ -511,13 +511,18 @@ tcp_end:
     }
 
     close(client_sock);
+    time_t timer;
+    struct tm *tblock;
+    timer = time(NULL);
+    tblock = localtime(&timer);
+    printf("<h2><br><br>%s<h2>",asctime(tblock));
     if (success_count == num) 
     {
-        printf("<h2><br>All devices update data successfully!<h2>\n");
+        printf("<h2>All devices update data successfully!<h2>\n");
     }
     else
     {
-        printf("<h2><br>%d/%d devices update data successfully!<h2>\n",success_count, num);
+        printf("<h2>%d/%d devices update data successfully!<h2>\n",success_count, num);
     }
     //printf("<meta http-equiv=\"refresh\"content=\"2; url=http://192.168.11.252/sync.html\">");
     return 0;
