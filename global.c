@@ -7,6 +7,12 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
+#include <pwd.h>
+
+char dir_upload[256];
+#define USER_NAME get_username()
+#define USER_DIR  get_userdir()
 
 int send_html(int count_br, int count_nbsp,  char *str)
 {
@@ -97,3 +103,37 @@ int get_local_ip(char *out_ip, char *out_mac)
 
     return 0;
 }
+
+uid_t get_userid(void)
+{
+    return getuid();
+}
+
+char * get_username(void)
+{
+    uid_t userid;
+    struct passwd *pwd;
+
+    userid = getuid();
+    pwd = getpwuid(userid);
+    
+    return pwd->pw_name;
+}
+
+char * get_userdir(void)
+{
+    uid_t userid;
+    struct passwd *pwd;
+
+    userid = getuid();
+    pwd = getpwuid(userid);
+    
+    return pwd->pw_dir;
+}
+
+char * get_upload_folder(void)
+{
+    sprintf(dir_upload,"%s/upload-folder",get_userdir());
+    return dir_upload;
+}
+

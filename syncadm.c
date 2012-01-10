@@ -17,7 +17,7 @@
 #include "global.h"
 
 #define BUFFER_SIZE     1024 
-#define SERVER_PORT_UDP	   21203 
+//#define SERVER_PORT_UDP	   21203 
 
 int none = 1;
 

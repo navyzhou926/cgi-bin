@@ -12,10 +12,6 @@
 #define META_FILE_NAME " filename=\""
 #define META_CONTENT_TYPE "multipart/form-data; boundary="
 
-#define FILE_TYPE_PIC "PictureFile"
-#define FILE_TYPE_MEDIA "MediaFile"
-#define FILE_TYPE_TEXT "TextFile"
-
 #define DEBUG_RETURN return 0
 #define DEBUG_PRINTF printf
 
@@ -124,10 +120,13 @@ int main(int argc, char* argv[])
         iret = access(DIR_UPLOAD, W_OK);
         if(iret != 0)
         {
-            output_err("upload-folder not exist or not privileged");
-            free(path);
-            free(read_buf);
-            return 0;
+            iret = mkdir(path, 0777);
+            //output_err(DIR_UPLOAD);
+            //output_err(USER_DIR);
+            //output_err("upload-folder not exist or not privileged");
+            //free(path);
+            //free(read_buf);
+            //return 0;
         }
 
 #if 0  //Whether create File_Path(PictureFile) or not
