@@ -33,6 +33,7 @@ int main(int argc, char* argv[])
     int read_len;
     char* fc_pos;
     char *path = (char*)malloc(256);
+    char valid_filename[6][30] = {"ko.tar.gz", "lib.tar.gz", "program.tar.gz", "test.tar.gz", "start.sh", "TS1500DC_update_ARM.bin"};
 
     printf("Content-Type: text/html\n\n");
 
@@ -158,6 +159,23 @@ int main(int argc, char* argv[])
                 if (*(file_name + i) == 92)
                     pp = file_name + i;
             }
+#if 1  //navy 20120202 add for restrict upload files
+    int filename_is_valid = 0;
+    for (i = 0; i < 6; i++) 
+    {
+        if (strcmp(valid_filename[i], pp + 1) == 0) 
+        {
+            filename_is_valid = 1;
+            break;
+        }
+    }
+    if (filename_is_valid == 0) 
+    {
+        printf("<h2>Please upload these files below: <h2><br>\n");
+        printf("<h2>%s、%s、%s、%s、%s、%s<h2><br>\n",valid_filename[0], valid_filename[1], valid_filename[2], valid_filename[3], valid_filename[4], valid_filename[5]);
+        return 0;
+    }
+#endif
             if (pp != NULL) 
                 strcat(path, pp + 1);
             else
