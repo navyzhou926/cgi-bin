@@ -8,24 +8,31 @@ BUFFER_SIZE	start.c	13;"	d	file:
 BUFFER_SIZE	stop.c	13;"	d	file:
 BUFFER_SIZE	sync.c	19;"	d	file:
 BUFFER_SIZE	syncadm.c	19;"	d	file:
-DEBUG_PRINTF	upload.c	20;"	d	file:
-DEBUG_RETURN	upload.c	19;"	d	file:
-DIR_UPLOAD	global.h	4;"	d
-FILE_TYPE_MEDIA	upload.c	16;"	d	file:
-FILE_TYPE_PIC	upload.c	15;"	d	file:
-FILE_TYPE_TEXT	upload.c	17;"	d	file:
+BUFFER_SIZE	syncadm_20111231_bak.c	19;"	d	file:
+BUFFER_SIZE	syncadm_20120107_10:05_OK.c	19;"	d	file:
+BUFFER_SIZE	syncadm_20120107_13:46_OK.c	19;"	d	file:
+BUFFER_SIZE	update_data.c	17;"	d	file:
+DEBUG_PRINTF	upload.c	16;"	d	file:
+DEBUG_RETURN	upload.c	15;"	d	file:
+DIR_UPLOAD	global.h	21;"	d
 META_CONTENT_TYPE	upload.c	13;"	d	file:
 META_FILE_NAME	upload.c	12;"	d	file:
 META_FILE_TYPE	upload.c	11;"	d	file:
-SERVER_PORT	start.c	14;"	d	file:
-SERVER_PORT	stop.c	14;"	d	file:
-SERVER_PORT	sync.c	20;"	d	file:
-SERVER_PORT	syncadm.c	20;"	d	file:
-SERVER_PORT_TCP	syncadm.c	22;"	d	file:
-SERVER_PORT_UDP	syncadm.c	21;"	d	file:
+SERVER_PORT	global.h	24;"	d
+SERVER_PORT_TCP	global.h	25;"	d
+SERVER_PORT_UDP	syncadm_20111231_bak.c	20;"	d	file:
+SERVER_PORT_UDP	syncadm_20120107_10:05_OK.c	20;"	d	file:
+SERVER_PORT_UDP	syncadm_20120107_13:46_OK.c	20;"	d	file:
+USER_DIR	global.c	15;"	d	file:
+USER_NAME	global.c	14;"	d	file:
 delete_all_file	delete.c	/^int delete_all_file(void)$/;"	f
+dir_upload	global.c	/^char dir_upload[256];$/;"	v
 get_local_ip	get_ip_mac.c	/^int get_local_ip(char *out_ip, char *out_mac)$/;"	f
 get_local_ip	global.c	/^int get_local_ip(char *out_ip, char *out_mac)$/;"	f
+get_upload_folder	global.c	/^char * get_upload_folder(void)$/;"	f
+get_userdir	global.c	/^char * get_userdir(void)$/;"	f
+get_userid	global.c	/^uid_t get_userid(void)$/;"	f
+get_username	global.c	/^char * get_username(void)$/;"	f
 ip	sync.c	/^    char *ip;$/;"	m	struct:string	file:
 main	admin_login.c	/^int main(int argc, const char *argv[])$/;"	f
 main	comment.c	/^int main()$/;"	f
@@ -39,21 +46,31 @@ main	start.c	/^int main(int argc, const char *argv[])$/;"	f
 main	stop.c	/^int main(int argc, const char *argv[])$/;"	f
 main	sync.c	/^int main(int argc, const char *argv[])$/;"	f
 main	syncadm.c	/^int main(int argc, const char *argv[])$/;"	f
+main	syncadm_20111231_bak.c	/^int main(int argc, const char *argv[])$/;"	f
+main	syncadm_20120107_10:05_OK.c	/^int main(int argc, const char *argv[])$/;"	f
+main	syncadm_20120107_13:46_OK.c	/^int main(int argc, const char *argv[])$/;"	f
 main	test.c	/^int main()$/;"	f
 main	update_data.c	/^int main(int argc, const char *argv[])$/;"	f
 main	upload.c	/^int main(int argc, char* argv[])$/;"	f
 main	upload_file.c	/^int main(int argc, const char *argv[])$/;"	f
 none	sync.c	/^int none = 1;$/;"	v
 none	syncadm.c	/^int none = 1;$/;"	v
-out_html	admin_login.c	/^int out_html(char *file)$/;"	f
+none	syncadm_20111231_bak.c	/^int none = 1;$/;"	v
+none	syncadm_20120107_10:05_OK.c	/^int none = 1;$/;"	v
+none	syncadm_20120107_13:46_OK.c	/^int none = 1;$/;"	v
 out_html	register_login.c	/^int out_html(char *file)$/;"	f
 output_err	upload.c	/^void output_err(const char* error)$/;"	f
 password	admin_login.c	/^    char *password;$/;"	m	struct:string	file:
 password	login.c	/^    char *password;$/;"	m	struct:string	file:
 password	register_login.c	/^    char *password;$/;"	m	struct:string	file:
 port	sync.c	/^    char *port;$/;"	m	struct:string	file:
+printf_debug	global.h	10;"	d
+printf_debug	global.h	8;"	d
 pthread	sync.c	/^void *pthread(void *arg)$/;"	f
 pthread	syncadm.c	/^void *pthread(void *arg)$/;"	f
+pthread	syncadm_20111231_bak.c	/^void *pthread(void *arg)$/;"	f
+pthread	syncadm_20120107_10:05_OK.c	/^void *pthread(void *arg)$/;"	f
+pthread	syncadm_20120107_13:46_OK.c	/^void *pthread(void *arg)$/;"	f
 rscallback	login.c	/^int rscallback(void *p, int argc, char **argv, char **argvv)$/;"	f
 rscallback	register.c	/^int rscallback(void *p, int argc, char **argv, char **argvv)$/;"	f
 rscallback_login	admin_login.c	/^int rscallback_login(void *p, int argc, char **argv, char **argvv)$/;"	f
